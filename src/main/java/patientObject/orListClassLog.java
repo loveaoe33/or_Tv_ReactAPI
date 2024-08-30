@@ -1,5 +1,7 @@
 package patientObject;
 
+import java.util.Date;
+
 import org.springframework.stereotype.Component;
 
 import jakarta.persistence.Entity;
@@ -18,20 +20,16 @@ import lombok.Setter;
 @Setter
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor	
+@NoArgsConstructor
 @Entity
-@Table(name = "ortvpatient")
-public class patientClass {
+@Table(name = "ortimelog")
+public class orListClassLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String Patient_Number;
-    private String Patient_Name;
-    private String Patient_Gender;
-    private String Patient_Status;
-	
-	
-	public String getList() {
-		return "123";
-	}
+    private String Edit_Log_Number;
+    private String Edit_Column;
+    private String Edit_Reason;
+    private String Edit_Time;
+    private String Edit_Emp;
 }
