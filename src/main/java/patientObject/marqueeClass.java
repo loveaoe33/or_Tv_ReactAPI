@@ -1,8 +1,11 @@
 package patientObject;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -22,13 +25,12 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "ortimelog")
-public class orListClassLog {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String Edit_Log_Number;
-    private String Edit_Column;
-    private String Edit_Time;
-    private String Edit_Emp;
+@JsonIgnoreProperties(ignoreUnknown = true)
+@Table(name = "ortvmarquee")
+public class marqueeClass {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	public Long id;
+	
+	public String Content;
 }

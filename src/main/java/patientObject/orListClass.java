@@ -1,9 +1,14 @@
 package patientObject;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,28 +27,35 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Table(name = "ortime")
 public class orListClass {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	private String Patient_Number;
-	private String Or_Room;
-	private String Call_PatientJson;
-	private String Arrival_AreaJson;
-	private String AnaeStart_DatesJson;
-	private String AnaeEnd_DatesJson;
-	private String OperPreStart_DateJson;
-	private String OperPreEnd_TimesJson;
-	private String OperStart_TimesJson;
-	private String OperEnd_DatesJson;
-	private String List_Number;
-	private int Step_Number;
-	private String First_Tag;
-	private String Edit_Log_Number;
-	private Date Inert_Time;
-	private String List_Status;
-	private String Finish_Time;
+	public Long id;
+	@Column(name = "Patient_Number")
+	public String Patient_Number;
+	@Column(name = "Or_Room")
+	public String Or_Room;
+	@Column(name = "Patient_Json_String")
+	public String Patient_Json_String;
+	@Column(name = "List_Number")
+	public String List_Number;
+	@Column(name = "Step_Number")
+	public int Step_Number;
+	@Column(name = "First_Tag")
+	public String First_Tag;
+	//Log
+	@Column(name = "Edit_Log_Number")
+	public String Edit_Log_Number;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyyMMdd HH:mm:ss")
+	@Column(name = "Insert_Time")
+	public LocalDateTime Insert_Time;
+	@Column(name = "List_Status")
+	public String List_Status;
+	@Column(name = "Finish_Time")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyyMMdd HH:mm:ss")
+	public LocalDateTime Finish_Time;
 
 }
