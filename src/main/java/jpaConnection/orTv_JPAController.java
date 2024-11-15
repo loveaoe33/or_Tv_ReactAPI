@@ -14,6 +14,8 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import ch.qos.logback.classic.Logger;
 import jpaConnection.orTv_JPAInterface;
 import patientObject.marqueeClass;
@@ -34,32 +36,35 @@ public class orTv_JPAController {
 
 	@Autowired
 	public orTv_JPAController(orTv_JPAInterface orTv_jpaInterface, orTime_JPAInterface orTime_jPAInterface,
-			orTimeLog_JPAInterface orTimeLog_jPAInterface,orTv_Marquee_JPAInterface orTv_Marquee_jPAInterface) {
+			orTimeLog_JPAInterface orTimeLog_jPAInterface, orTv_Marquee_JPAInterface orTv_Marquee_jPAInterface) {
 		this.orTv_jpaInterface = orTv_jpaInterface;
 		this.orTime_jPAInterface = orTime_jPAInterface;
 		this.orTimeLog_jPAInterface = orTimeLog_jPAInterface;
-		this.orTv_Marquee_jPAInterface=orTv_Marquee_jPAInterface;
+		this.orTv_Marquee_jPAInterface = orTv_Marquee_jPAInterface;
 	}
 
-	
-	public List<marqueeClass> selectMarquee() { //帶出跑馬燈
-		List<marqueeClass>data=orTv_Marquee_jPAInterface.findAll();
+	public List<marqueeClass> selectMarquee() { // 帶出跑馬燈
+		List<marqueeClass> data = orTv_Marquee_jPAInterface.findAll();
 		return data;
-		
+
 	}
-	
-	public String insertMarquee(marqueeClass marquee) { //新增跑馬燈
-		orTv_Marquee_jPAInterface.save(marquee);
-		return null;
-		
-		
+
+	public String insertMarquee(marqueeClass marquee) { // 新增跑馬燈
+		marqueeClass data = orTv_Marquee_jPAInterface.save(marquee);
+		if (data == null) {
+
+			return "fail";
+		}
+		return "Sucess";
+
 	}
-	public String deleteMarquee(long l) { //刪除跑馬燈
-		orTv_Marquee_jPAInterface.deleteAllById(null);
-		return null;
-		
+
+	public String deleteMarquee(long id) { // 刪除跑馬燈
+		orTv_Marquee_jPAInterface.deleteById(id);
+		return "Sucess";
+
 	}
-	
+
 	public String insertPatient(patientClass patient) {// 新增開刀內部病人
 		orTv_jpaInterface.save(patient);
 		return "Sucess";
@@ -85,11 +90,30 @@ public class orTv_JPAController {
 		return data;
 
 	}
+	
+	public Optional<patientClass> getPatientDetail(Long Patiend_Id) { // 取得開刀內部所有病人
+		String test = "";
+		Optional<patientClass> data = orTv_jpaInterface.findById(Patiend_Id);
+		return data;
+
+	}
+	
+	public String updatePatientDetail(patientClass patientclass) { // 更新明細
+		String test = "";
+		int Rows = orTv_jpaInterface.updatePatientDetail(patientclass.id, patientclass.Patient_Number, patientclass.Patient_Gender, patientclass.Patient_Name, patientclass.Patient_Status);
+		return (Rows>0)?  "Sucess": "fail";
+
+	}
+	
 
 	public String insertOrtime(orListClass orlistClass) { // 新增開刀紀錄
 		try {
 
 			orListClass data = orTime_jPAInterface.save(orlistClass); // 成功儲存會回傳單筆物件
+			if (data == null) {
+
+				return "fail";
+			}
 			return "Sucess";
 		} catch (DataAccessException e) {
 			return "fail";
@@ -102,10 +126,11 @@ public class orTv_JPAController {
 		return "Sucess";
 	}
 
-	public String editOrtime(orListClass orlistClass,orListClassLog orlistClassLog) {// 編輯開刀紀錄
+	public String editOrtime(orListClass orlistClass, orListClassLog orlistClassLog) {// 編輯開刀紀錄
 		try {
-			int Rows = orTime_jPAInterface.UpdateEditLog(orlistClass.getList_Number(), orlistClass.getPatient_Json_String(),orlistClass.getEdit_Log_Number());
-			System.out.println("到這"+Rows);
+			int Rows = orTime_jPAInterface.UpdateEditLog(orlistClass.getList_Number(),
+					orlistClass.getPatient_Json_String(), orlistClass.getEdit_Log_Number());
+			System.out.println("到這" + Rows);
 
 			if (Rows < 1) {
 				return "fail";
@@ -163,19 +188,16 @@ public class orTv_JPAController {
 		}
 
 	}
-	
-	
+
 	public String deleteTemp(orListClass orlistClass) {
 		try {
 			int Rows = orTime_jPAInterface.DeleteForm(orlistClass.List_Number);
 			return (Rows < 1) ? "fail" : "Sucess";
-	} catch (DataAccessException e) {
-		System.out.println("deleteTemp錯誤" + e.toString());
-		return "fail";
-	}		
-}
-		
-	
+		} catch (DataAccessException e) {
+			System.out.println("deleteTemp錯誤" + e.toString());
+			return "fail";
+		}
+	}
 
 	public String getOrtList(String ListNumber) { // 撈出暫存明細OK
 		return tampPatient.get(ListNumber);

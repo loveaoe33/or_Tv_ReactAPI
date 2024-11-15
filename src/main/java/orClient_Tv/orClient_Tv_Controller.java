@@ -1,5 +1,7 @@
 package orClient_Tv;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -59,17 +61,36 @@ public class orClient_Tv_Controller<Json> implements ErrorController {
 	    
 	
 	@CrossOrigin
-	@GetMapping("orClient_Tv_Controller/insertPatient") //新增病人 
-	public String insertPatient() {
+	@PostMapping("orClient_Tv_Controller/insertPatient") //新增病人 
+	public String insertPatient(@RequestBody String content) {
 		
-		patientClass x=new patientClass();
-		patientClass data=patientClass.builder().Patient_Number("08001").Patient_Name("測試").Patient_Gender("女").Patient_Status("手術中").build();
-		return orTv_jpaController.insertPatient(data);
+		try {
+			patientClass data = orMapper.readValue(content, patientClass.class);
+
+			return orTv_jpaController.insertPatient(data);
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+            System.out.print("insertPatient錯誤"+e.toString());
+			return "fail";
+		}
 	}
 	@CrossOrigin
-	@GetMapping("/orClient_Tv_Controller/deletePatient") //刪除病人
-	public String deletePatient() {
-		return orTv_jpaController.deletePatient((long) 5);
+	@PostMapping("/orClient_Tv_Controller/deletePatient") //刪除病人
+	public String deletePatient(@RequestBody String content) {
+		try {
+		JsonNode nodes = orMapper.readTree(content);
+		return orTv_jpaController.deletePatient(nodes.get("Patient_Id").asLong());
+
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+            System.out.print("deletePatient錯誤"+e.toString());
+			return "fail";
+		}
+
+		
+	
 	}
 	@CrossOrigin
 	@GetMapping("/orClient_Tv_Controller/printPatient") //撈出病人	
@@ -77,19 +98,80 @@ public class orClient_Tv_Controller<Json> implements ErrorController {
 		return orTv_jpaController.getPatient();
 	}
 	
+	@CrossOrigin
+	@GetMapping("/orClient_Tv_Controller/printPatientDetail") //撈出病人明細
+	public Optional<patientClass> printPatientDetail(@RequestParam String content) throws UnsupportedEncodingException {
+		
+		try {
+		content = URLDecoder.decode(content, "UTF-8");
+		JsonNode nodes = orMapper.readTree(content);
+
+		return orTv_jpaController.getPatientDetail(nodes.get("Patient_Id").asLong());
+
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+            System.out.print("printPatientDetail錯誤"+e.toString());
+			return null;
+		}
+		
+	}
+	
 	
 	@CrossOrigin
-	@GetMapping("orClient_Tv_Controller/insertMarquee") //新增跑馬燈
-	public String insertMarquee() {
+	@PostMapping("/orClient_Tv_Controller/updatePatientDetail") //更新病人明細
+	public String  updatePatientDetail(@RequestBody String content) {
 		
-		patientClass x=new patientClass();
-	    marqueeClass ortvmaquee=marqueeClass.builder().Content("123").build();
-		return orTv_jpaController.insertMarquee(ortvmaquee);
+		try {
+		patientClass data = orMapper.readValue(content,patientClass.class);
+		return orTv_jpaController.updatePatientDetail(data);
+
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+            System.out.print("updatePatientDetail錯誤"+e.toString());
+			return null;
+		}
+		
+	}
+
+	
+	
+	
+	
+	@CrossOrigin
+	@PostMapping("orClient_Tv_Controller/insertMarquee") //新增跑馬燈
+	public String insertMarquee(@RequestBody String content) {
+		
+		
+		try {
+			marqueeClass data = orMapper.readValue(content, marqueeClass.class);
+			return orTv_jpaController.insertMarquee(data);
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+            System.out.print("insertMarquee錯誤"+e.toString());
+			return "fail";
+		}
+
+
 	}
 	@CrossOrigin
-	@GetMapping("/orClient_Tv_Controller/deleteMarquee") //刪除跑馬燈
-	public String deleteMarquee() {
-		return orTv_jpaController.deleteMarquee((long) 5);
+	@PostMapping("/orClient_Tv_Controller/deleteMarquee") //刪除跑馬燈
+	public String deleteMarquee(@RequestBody String content) {
+		try {
+            System.out.print("insertMarquee錯誤"+content);
+
+			JsonNode nodes = orMapper.readTree(content);
+			return orTv_jpaController.deleteMarquee(nodes.get("Marquee_Id").asLong());
+
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+            System.out.print("deleteMarquee錯誤"+e.toString());
+
+			return "fail";
+		}
 	}
 	@CrossOrigin
 	@GetMapping("/orClient_Tv_Controller/printMarquee") //撈出跑馬燈

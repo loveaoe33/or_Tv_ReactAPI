@@ -24,11 +24,11 @@ import lombok.Setter;
 public class patientClass {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String Patient_Number;
-    private String Patient_Name;
-    private String Patient_Gender;
-    private String Patient_Status;
+    public Long id;
+    public String Patient_Number;
+    public String Patient_Name;
+    public String Patient_Gender;
+    public String Patient_Status;
 	
 	
 	public String getList() {
